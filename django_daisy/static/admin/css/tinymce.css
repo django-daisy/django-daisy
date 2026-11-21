@@ -1,0 +1,123 @@
+html .tox {
+    --daisy-editor-border: color-mix(in oklab, var(--color-base-content) 20%, transparent);
+    --daisy-editor-muted: color-mix(in oklab, var(--color-base-content) 65%, var(--color-base-100));
+}
+
+html .tox.tox-tinymce,
+html .tox :is(.tox-menu, .tox-dialog, .tox-pop) {
+    background-color: var(--color-base-100);
+    border-color: var(--daisy-editor-border);
+    color: var(--color-base-content);
+}
+
+html .tox.tox-tinymce {
+    border-radius: var(--radius-field);
+}
+
+html .tox :is(.tox-editor-header, .tox-toolbar, .tox-toolbar__primary, .tox-toolbar__overflow,
+              .tox-toolbar-overlord, .tox-statusbar, .tox-dialog__header, .tox-dialog__footer) {
+    background: var(--color-base-200);
+    border-color: var(--daisy-editor-border);
+    color: var(--color-base-content);
+}
+
+html .tox.tox-tinymce .tox-editor-header:not(.tox-editor-header--empty) {
+    background: var(--color-base-200);
+    box-shadow: none;
+    border-bottom: 1px solid var(--daisy-editor-border);
+}
+
+html .tox :is(.tox-edit-area__iframe, .tox-textfield, .tox-textarea, .tox-listboxfield .tox-listbox) {
+    background-color: var(--color-base-100);
+    border-color: var(--daisy-editor-border);
+    color: var(--color-base-content);
+}
+
+html .tox :is(.tox-tbtn, .tox-collection__item, .tox-dialog__title, .tox-label,
+              .tox-dialog__body-content, .tox-statusbar__path-item, .tox-statusbar__wordcount) {
+    color: var(--color-base-content);
+}
+
+html .tox .tox-statusbar__resize-handle svg {
+    fill: currentColor;
+}
+
+html .tox:is(.tox-tinymce, .tox-tinymce-aux) .tox-tbtn svg {
+    fill: currentColor;
+}
+
+html .tox .tox-tbtn {
+    background: transparent;
+}
+
+html .tox .tox-tbtn.tox-tbtn--bespoke {
+    background: var(--color-base-100);
+}
+
+html .tox:is(.tox-tinymce, .tox-tinymce-aux) .tox-tbtn:is(:hover, :focus, :active, .tox-tbtn--active, .tox-tbtn--enabled),
+html .tox .tox-collection .tox-collection__item:is(:hover, :focus, .tox-collection__item--active,
+                                                .tox-collection__item--enabled):not(.tox-collection__item--state-disabled) {
+    background: color-mix(in oklab, var(--color-base-content) 14%, var(--color-base-100));
+    color: var(--color-base-content);
+}
+
+html .tox .tox-tbtn .tox-tbtn__select-label,
+html .tox .tox-collection .tox-collection__item-label {
+    color: inherit;
+}
+
+/* TinyMCE copies iframe colors inline onto the block-format previews. */
+html .tox .tox-menu .tox-collection__item-label > :is(p, h1, h2, h3, h4, h5, h6, pre) {
+    background-color: transparent !important;
+    color: inherit !important;
+}
+
+html .tox:is(.tox-tinymce, .tox-tinymce-aux) .tox-tbtn:is(:disabled, [aria-disabled="true"], .tox-tbtn--disabled) {
+    background: transparent;
+    color: var(--daisy-editor-muted);
+}
+
+html .tox:is(.tox-tinymce, .tox-tinymce-aux) .tox-tbtn:focus::after {
+    border-color: var(--color-primary);
+    box-shadow: none;
+}
+
+html .tox .tox-button {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-primary-content);
+}
+
+html .tox .tox-button.tox-button--secondary {
+    background-color: var(--color-base-300);
+    border-color: var(--daisy-editor-border);
+    color: var(--color-base-content);
+}
+
+html .tox .tox-dialog__body-nav-item {
+    color: var(--color-base-content);
+}
+
+html .tox .tox-dialog__body-nav-item:hover,
+html .tox .tox-dialog__body-nav-item:focus {
+    background: var(--color-base-300);
+    color: var(--color-base-content);
+}
+
+html .tox .tox-dialog__body-nav-item--active {
+    border-bottom-color: var(--color-primary);
+    color: var(--color-base-content);
+}
+
+html .tox .tox-dropzone {
+    background: var(--color-base-200);
+    border-color: var(--daisy-editor-border);
+}
+
+html .tox .tox-dropzone p {
+    color: var(--color-base-content);
+}
+
+html .tox.tox-tinymce:focus-within {
+    border-color: var(--color-primary);
+}
