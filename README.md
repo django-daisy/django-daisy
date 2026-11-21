@@ -288,6 +288,14 @@ LANGUAGES = [
 
 ---
 
+## Custom Fields
+
+### Rich Text Editor
+
+Use `django-tinymce-editor` to add rich text editing to Django Daisy. [PyPI](https://pypi.org/project/django-tinymce-editor/) · [GitHub](https://github.com/django-daisy/tinymce-editor)
+
+---
+
 ## 📸 Screenshots
 
 <details>
