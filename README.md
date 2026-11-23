@@ -337,3 +337,87 @@ MIT License - see LICENSE file for details
 ---
 
 **Made with ❤️ by the Django Daisy team**
+
+### Dashboard
+
+The index shows an overview of admin log activity, quick access links, daily activity,
+and recent changes. Counts and the chart cover the last seven calendar days in the
+active time zone. Superusers see all admin log entries; other staff see their own.
+Quick access defaults to the first six model add pages available to the user.
+When the registered user admin grants view permission, the overview also shows total,
+active, and staff user counts, and a daily registrations chart. These use the user
+admin’s `get_queryset(request)` so it must enforce any row-level restrictions. Active
+and staff counts require corresponding boolean fields. The chart is omitted if the
+configured date field is absent; its date range follows `activity_days`. Disable either
+user component or select a custom date field through the dashboard settings below.
+
+Configure the dashboard with `DAISY_SETTINGS`:
+
+```python
+from django.utils.translation import gettext_lazy as _
+
+DAISY_SETTINGS = {
+    'DASHBOARD': {
+        'show_stats': True,
+        'show_actions': True,
+        'show_activity': True,
+        'show_history': True,
+        'show_user_stats': True,  # Requires permission to view the registered user admin
+        'show_user_chart': True,
+        'user_date_field': 'date_joined',  # DateField or DateTimeField on AUTH_USER_MODEL
+        'activity_days': 7,  # 1–31, inclusive of today
+        'history_limit': 10,
+        # Omit this key for permission-aware model add links; [] disables links.
+        'quick_actions': [
+            {'label': _('View reports'), 'url': '/admin/reports/',
+             'icon': 'fa-solid fa-chart-line'},
+        ],
+    },
+}
+```
+
+Configured links are trusted project configuration: only include links appropriate
+for all dashboard users, or filter them per request in a custom admin site. URLs
+must point to views that enforce their own permissions. Labels can use Django's
+`gettext_lazy` for translation.
+
+For project-specific metrics and permission-aware actions, subclass `DaisyAdminSite`
+and override `get_dashboard_config(request)`, `get_dashboard_stats(request, defaults)`,
+or `get_dashboard_actions(request, defaults)`. The last two return lists of dictionaries;
+statistics accept `label`, `value`, and optional `description` and Font Awesome `icon`;
+actions accept `label`, `url`, and optional `icon`. Configure the subclass with
+`DEFAULT_ADMIN_SITE_CLASS = "your_project.admin.YourAdminSite"` in Django settings. The chart and
+default statistics use the queryset returned by `get_log_entries(request)`.
+
+### Global admin search
+
+The search field in the admin navigation (or `Ctrl+K` / `⌘K`) finds accessible
+registered model pages and add actions. Results appear after two characters. It
+uses the active admin site's app list, so hidden apps and models unavailable to
+the current user do not appear. Record search is **off by default**; explicitly
+select models after reviewing their search fields and access rules:
+
+```python
+DAISY_SETTINGS = {
+    'GLOBAL_SEARCH': {
+        'enabled': True,  # Set to False to remove the feature.
+        'models': ['auth.user', 'shop.order'],  # app_label.model_name
+        'limit_per_model': 5,  # 1–20 results per model
+    },
+}
+```
+
+Only registered, visible models with `ModelAdmin.get_search_fields(request)`
+configured are searched. Search calls each model admin's `get_queryset()` and
+`get_search_results()`, and checks view/change permission for each result. The
+queryset must itself enforce any tenant or row-level restrictions, including
+restrictions on fields searched or on related data. Results link to the model's
+admin change page, which enforces its own access rules. To bound work, search
+examines at most ten times the result limit for each model; some permitted
+matches may be omitted when many preceding objects are denied. Search terms
+must contain at least two characters and are limited to 200 characters.
+
+Override `DaisyAdminSite.get_global_search_config(request)` to choose enabled
+models per request. The feature does not add models or require migrations. The
+admin site's own `admin_view` protects the search endpoint; projects using a
+custom site must subclass `DaisyAdminSite` to use it.
