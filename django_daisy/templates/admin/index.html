@@ -1,62 +1,44 @@
 {% extends "admin/base_site.html" %}
-{% load humanize %}
-{% load dash_tags %}
-{% load i18n %}
-
-{% block content_title %}
-    {{ index_title|default:"Django Daisy Dashboard" }}
-{% endblock %}
-
+{% load humanize i18n static %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'admin/css/dashboard_overview.css' %}">{% endblock %}
+{% block content_title %}{{ index_title|default:site_header }}{% endblock %}
 {% block content %}
-    <div class="mt-3 grid gap-6">
-        <div class="w-full">
-            <div aria-label="Card" class="card bg-base-100 card-bordered overflow-hidden">
-                <div class="card-body p-4 sm:p-6">
-                    <div class="flex flex-wrap items-center justify-between gap-2">
-                        <span class="font-medium text-base">{% trans "History" %}</span>
-                        <a class="btn btn-link btn-sm" href="{{ logentry_changelist_url }}">{% trans "Show all" %}</a>
-                    </div>
-                    <div class="overflow-x-auto w-full mt-2">
-                        <table class="table table-sm sm:table-md text-nowrap sm:text-wrap w-full">
-                            <thead>
-                            <tr>
-                                <th class="min-w-[120px]">{% trans "In" %}</th>
-                                <th>{% trans "Action" %}</th>
-                                <th>{% trans "At Time" %}</th>
-                                <th>{% trans "Admin" %}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for history in latest_history %}
-                                <tr>
-                                    <td>
-                                        <a href="{{ history.get_admin_url }}"
-                                           class="text-primary hover:underline">
-                                            {{ history.content_type }}
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a class="underline"
-                                           href="{% url 'admin:admin_logentry_change' history.pk %}">{{ history.get_action_flag_display }}</a>
-                                    </td>
-                                    <td>
-                                    <span class="text-muted text-xs sm:text-sm">
-                                        {{ history.action_time|naturaltime }}
-                                    </span>
-                                    </td>
-                                    <td>
-                                        <strong>
-                                            <a href="{% get_user_admin_change_url history.user %}" class="hover:underline">{{ history.user }}</a>
-                                        </strong>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+<div class="daisy-dashboard">
+    {% if dashboard.stats and dashboard.config.show_stats != False %}
+    <section aria-label="{% trans 'Overview' %}">
+        <div class="dashboard-stats">
+            {% for stat in dashboard.stats %}<div class="dashboard-stat card bg-base-100 card-bordered"><div><div class="dashboard-muted">{{ stat.label }}</div><div class="dashboard-stat-value">{{ stat.value }}</div>{% if stat.description %}<div class="dashboard-muted">{{ stat.description }}</div>{% endif %}</div>{% if stat.icon %}<span class="dashboard-icon"><i class="{{ stat.icon }}" aria-hidden="true"></i></span>{% endif %}</div>{% endfor %}
         </div>
+    </section>
+    {% endif %}
+    <div class="dashboard-middle">
+    {% if dashboard.config.show_activity != False %}
+    <section class="dashboard-card card bg-base-100 card-bordered" aria-labelledby="activity-title">
+        <div class="dashboard-section-heading"><div class="dashboard-heading-main"><span class="dashboard-heading-icon dashboard-heading-activity" aria-hidden="true"><i class="fa-solid fa-chart-column"></i></span><div><h2 id="activity-title">{% trans "Activity overview" %}</h2><p>{% trans "Admin actions over time" %}</p></div></div><span class="dashboard-period">{% blocktranslate count days=dashboard.days %}Last {{ days }} day{% plural %}Last {{ days }} days{% endblocktranslate %}</span></div>
+        <div class="dashboard-legend" aria-hidden="true"><span><i class="legend-add"></i>{% trans "Additions" %}</span><span><i class="legend-change"></i>{% trans "Changes" %}</span><span><i class="legend-delete"></i>{% trans "Deletions" %}</span></div>
+        <div class="dashboard-chart" role="list" aria-label="{% trans 'Daily admin actions' %}">{% for point in dashboard.chart %}<div class="dashboard-chart-column" role="listitem" aria-label="{{ point.label }}: {% trans 'Additions' %} {{ point.additions }}, {% trans 'Changes' %} {{ point.changes }}, {% trans 'Deletions' %} {{ point.deletions }}"><span class="dashboard-chart-count">{{ point.count }}</span><div class="dashboard-chart-track"><div class="dashboard-chart-stack"><div class="dashboard-chart-segment legend-delete" style="height: {% widthratio point.deletions dashboard.chart_max 100 %}%"></div><div class="dashboard-chart-segment legend-change" style="height: {% widthratio point.changes dashboard.chart_max 100 %}%"></div><div class="dashboard-chart-segment legend-add" style="height: {% widthratio point.additions dashboard.chart_max 100 %}%"></div></div></div><span class="dashboard-chart-label">{{ point.label }}</span></div>{% endfor %}</div>
+    </section>
+    {% endif %}
+    {% if dashboard.actions and dashboard.config.show_actions != False %}
+    <section class="dashboard-card card bg-base-100 card-bordered" aria-labelledby="quick-access-title">
+        <div class="dashboard-section-heading"><div class="dashboard-heading-main"><span class="dashboard-heading-icon dashboard-heading-actions" aria-hidden="true"><i class="fa-solid fa-bolt"></i></span><div><h2 id="quick-access-title">{% trans "Quick access" %}</h2><p>{% trans "Get started with common actions" %}</p></div></div></div>
+        <div class="dashboard-actions">{% for action in dashboard.actions %}<a class="dashboard-action" href="{{ action.url }}">{% if action.icon %}<span class="dashboard-icon"><i class="{{ action.icon }}" aria-hidden="true"></i></span>{% endif %}<span>{{ action.label }}</span></a>{% endfor %}</div>
+    </section>
+    {% endif %}
     </div>
-
+    {% if dashboard.user_chart %}
+    <section class="dashboard-card card bg-base-100 card-bordered" aria-labelledby="user-chart-title">
+        <div class="dashboard-section-heading"><div class="dashboard-heading-main"><span class="dashboard-heading-icon dashboard-heading-users" aria-hidden="true"><i class="fa-solid fa-user-plus"></i></span><div><h2 id="user-chart-title">{% trans "New users" %}</h2><p>{% trans "User registrations over time" %}</p></div></div><span class="dashboard-period">{% blocktranslate count days=dashboard.days %}Last {{ days }} day{% plural %}Last {{ days }} days{% endblocktranslate %}</span></div>
+        <div class="dashboard-chart dashboard-user-chart" role="list" aria-label="{% trans 'Daily user registrations' %}">{% for point in dashboard.user_chart.points %}<div class="dashboard-chart-column" role="listitem" aria-label="{{ point.label }}: {{ point.count }}"><span class="dashboard-chart-count">{{ point.count }}</span><div class="dashboard-chart-track"><div class="dashboard-user-bar" style="height: {% widthratio point.count dashboard.user_chart.max 100 %}%"></div></div><span class="dashboard-chart-label">{{ point.label }}</span></div>{% endfor %}</div>
+    </section>
+    {% endif %}
+    {% if dashboard.config.show_history != False %}
+    <section class="dashboard-card card bg-base-100 card-bordered" aria-labelledby="history-title">
+        <div class="dashboard-section-heading"><div class="dashboard-heading-main"><span class="dashboard-heading-icon dashboard-heading-history" aria-hidden="true"><i class="fa-solid fa-clock-rotate-left"></i></span><div><h2 id="history-title">{% trans "Latest changes" %}</h2><p>{% trans "Recent admin activity" %}</p></div></div>{% if dashboard.log_url %}<a class="btn btn-link btn-sm" href="{{ dashboard.log_url }}">{% trans "Show all" %}</a>{% endif %}</div>
+        <div class="dashboard-table-wrap"><table class="table table-sm sm:table-md w-full"><thead><tr><th>{% trans "Object" %}</th><th>{% trans "Action" %}</th><th>{% trans "At Time" %}</th><th>{% trans "Admin" %}</th></tr></thead><tbody>
+        {% for item in dashboard.history %}{% with entry=item.entry %}<tr><td><div>{% if item.url %}<a class="text-primary hover:underline" href="{{ item.url }}">{{ entry.object_repr }}</a>{% else %}{{ entry.object_repr }}{% endif %}</div><small class="dashboard-muted">{% if entry.content_type %}{{ entry.content_type }}{% else %}{% trans "Unknown" %}{% endif %}</small></td><td><span class="dashboard-badge {% if entry.is_addition %}dashboard-badge-add{% elif entry.is_deletion %}dashboard-badge-delete{% endif %}">{{ entry.get_action_flag_display }}</span></td><td><time datetime="{{ entry.action_time|date:'c' }}" title="{{ entry.action_time }}">{{ entry.action_time|naturaltime }}</time></td><td><div class="dashboard-user"><span class="dashboard-avatar" aria-hidden="true">{{ entry.user|stringformat:"s"|slice:":1"|upper }}</span><span>{{ entry.user }}</span></div></td></tr>{% endwith %}{% empty %}<tr><td colspan="4" class="dashboard-empty">{% trans "No recent activity yet." %}</td></tr>{% endfor %}
+        </tbody></table></div>
+    </section>
+    {% endif %}
+</div>
 {% endblock %}

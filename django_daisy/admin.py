@@ -4,13 +4,16 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
 from django.core.files.storage import FileSystemStorage
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from django.urls import path, reverse
+from django.urls import NoReverseMatch, path, reverse
+from django.views.decorators.http import require_GET
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
 from django_daisy._helpers import ASSET_PATH
 from django_daisy.module_settings import DAISY_SETTINGS
+from django_daisy.dashboard import build_dashboard
 
 logger = logging.getLogger(__name__)
 
@@ -26,14 +29,15 @@ class DaisyAdminSite(admin.AdminSite):
     password_change_done_template = "admin/registration/password_change_done.html"
     site_title = DAISY_SETTINGS.get("SITE_TITLE", "django admin")
     site_header = DAISY_SETTINGS.get("SITE_HEADER", "Administration")
-    index_title = DAISY_SETTINGS.get("SITE_HEADER", "hi, welcome to your dashboard")
+    index_title = DAISY_SETTINGS.get("INDEX_TITLE", "hi, welcome to your dashboard")
     logo = DAISY_SETTINGS.get(
         "SITE_LOGO", f"{ASSET_PATH}admin/img/daisyui-logomark.svg"
     )
 
     def get_urls(self):
         urls = [
-            path("json-editor-upload-handler/", self.admin_view(self.upload_file), name='json-editor-upload-handler')
+            path("json-editor-upload-handler/", self.admin_view(self.upload_file), name='json-editor-upload-handler'),
+            path("global-search/", self.admin_view(self.global_search), name='global_search'),
         ]
         return urls + super().get_urls()
 
@@ -42,22 +46,40 @@ class DaisyAdminSite(admin.AdminSite):
 
         return LogEntry.objects.select_related("content_type", "user")
 
+    def get_dashboard_config(self, request):
+        return DAISY_SETTINGS.get("DASHBOARD", {})
+
+    def get_global_search_config(self, request):
+        return DAISY_SETTINGS.get("GLOBAL_SEARCH", {})
+
+    @method_decorator(require_GET)
+    def global_search(self, request):
+        from django_daisy.global_search import search
+
+        config = self.get_global_search_config(request)
+        if not config.get("enabled", True):
+            return JsonResponse({"results": []}, status=404)
+        return JsonResponse({"results": search(self, request, config)})
+
+    def get_dashboard_stats(self, request, defaults):
+        return defaults
+
+    def get_dashboard_actions(self, request, defaults):
+        return self.get_dashboard_config(request).get("quick_actions", defaults)
+
     def index(self, request, extra_context=None):
         """
         Display the main admin index page, which lists all of the installed
         apps that have been registered in this site.
         """
 
-        logentry_changelist_url = reverse("admin:admin_logentry_changelist")
-
         app_list = self.get_app_list(request)
 
         context = {
             **self.each_context(request),
-            "latest_history": self.get_log_entries(request)[:15],
+            "dashboard": build_dashboard(self, request, app_list),
             "title": self.index_title,
             "app_list": app_list,
-            "logentry_changelist_url": logentry_changelist_url,
             **(extra_context or {}),
         }
 
@@ -104,6 +126,12 @@ class DaisyAdminSite(admin.AdminSite):
 
     def each_context(self, request):
         context = super().each_context(request)
+        search_url = None
+        if self.has_permission(request) and self.get_global_search_config(request).get("enabled", True):
+            try:
+                search_url = reverse("%s:global_search" % self.name, current_app=self.name)
+            except NoReverseMatch:
+                pass
         try:
             change_language_url = reverse("set_language")
         except:
@@ -116,6 +144,7 @@ class DaisyAdminSite(admin.AdminSite):
             "logo": self.get_logo(request),
             "can_delete_popup": "",
             "use_i18n": getattr(settings, "USE_I18N", False),
+            "global_search_url": search_url,
         }
 
     def get_logo(self, request):

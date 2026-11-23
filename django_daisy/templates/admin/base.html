@@ -70,6 +70,7 @@
     {% endif %}
 
     <link href="{% static 'admin/css/customized_components.css' %}?v=6" rel="stylesheet">
+    {% if global_search_url %}<link href="{% static 'admin/css/global_search.css' %}" rel="stylesheet">{% endif %}
 
     <link href="{% static 'admin/css/calendar.css' %}" rel="stylesheet">
     <link href="{% static 'admin/css/tinymce.css' %}?v=5" rel="stylesheet">
@@ -199,6 +200,7 @@
 <script src="{% static "admin/js/vendor/tom-select.complete.min.js" %}"></script>
 <script defer src="{% static 'admin/js/SelectBox.js' %}"></script>
 <script src="{% static 'admin/js/admin/dashboard.js' %}"></script>
+{% if global_search_url %}<script defer src="{% static 'admin/js/admin/global_search.js' %}"></script>{% endif %}
 {% for custom_script_link in EXTRA_SCRIPTS %}
     <script src="{{ custom_script_link }}"></script>
 {% endfor %}

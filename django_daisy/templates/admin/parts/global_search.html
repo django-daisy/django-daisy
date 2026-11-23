@@ -1,0 +1,24 @@
+{% load i18n %}
+<div id="global-search" class="daisy-search" role="search"
+     data-user="{{ user.pk }}" data-recent="{% trans 'Recently opened' %}"
+     data-url="{{ global_search_url }}" data-empty="{% trans 'No results found.' %}"
+     data-error="{% trans 'Search is unavailable. Please try again.' %}"
+     data-loading="{% trans 'Searching…' %}"
+     data-prompt="{% trans 'Type at least two characters to search.' %}">
+    <div class="daisy-search-field">
+        <i class="fa fa-search" aria-hidden="true"></i>
+        <input id="global-search-input" type="search" autocomplete="off"
+               aria-label="{% trans 'Search pages, records, and actions' %}"
+               aria-controls="global-search-dropdown" placeholder="{% trans 'Search' %}">
+    </div>
+    <div id="global-search-dropdown" class="daisy-search-dropdown card bg-base-100 text-base-content" hidden>
+        <div class="daisy-search-content">
+            <p id="global-search-status" role="status" aria-live="polite">{% trans 'Type at least two characters to search.' %}</p>
+            <ul id="global-search-results" class="menu menu-sm" aria-label="{% trans 'Search results' %}"></ul>
+        </div>
+        <div class="daisy-search-footer bg-base-200">
+            <span><kbd class="kbd kbd-xs">↑</kbd> <kbd class="kbd kbd-xs">↓</kbd> {% trans 'Navigate' %}</span>
+            <span><kbd class="kbd kbd-xs">Esc</kbd> {% trans 'Close' %}</span>
+        </div>
+    </div>
+</div>
