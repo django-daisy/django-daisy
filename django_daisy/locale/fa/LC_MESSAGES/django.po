@@ -979,3 +979,71 @@ msgstr "یک رمز عبور جدید برای کاربر <strong>%(username)s</
 #~ "                                    "
 #~ msgstr[0] "لطفاً خطای زیر را اصلاح کنید."
 #~ msgstr[1] "لطفاً خطاهای زیر را اصلاح کنید."
+
+msgid "Overview"
+msgstr "نمای کلی"
+
+msgid "Activity"
+msgstr "فعالیت"
+
+msgid "Additions"
+msgstr "افزوده‌ها"
+
+msgid "Changes"
+msgstr "تغییرات"
+
+msgid "Deletions"
+msgstr "حذف‌ها"
+
+msgid "Quick access"
+msgstr "دسترسی سریع"
+
+msgid "Get started with common actions"
+msgstr "دسترسی به عملیات پرکاربرد"
+
+msgid "Activity overview"
+msgstr "نمای کلی فعالیت‌ها"
+
+msgid "Admin actions over time"
+msgstr "عملیات مدیریت در طول زمان"
+
+msgid "Daily admin actions"
+msgstr "عملیات روزانه مدیریت"
+
+msgid "Latest changes"
+msgstr "آخرین تغییرات"
+
+msgid "Recent admin activity"
+msgstr "فعالیت اخیر مدیریت"
+
+msgid "Object"
+msgstr "آیتم"
+
+msgid "Unknown"
+msgstr "نامشخص"
+
+msgid "No recent activity yet."
+msgstr "هنوز فعالیت اخیری ثبت نشده است."
+
+msgid "Last %(days)s day"
+msgid_plural "Last %(days)s days"
+msgstr[0] "%(days)s روز گذشته"
+msgstr[1] "%(days)s روز گذشته"
+
+msgid "Total users"
+msgstr "کل کاربران"
+
+msgid "Active users"
+msgstr "کاربران فعال"
+
+msgid "Staff accounts"
+msgstr "حساب‌های کارکنان"
+
+msgid "New users"
+msgstr "کاربران جدید"
+
+msgid "User registrations over time"
+msgstr "ثبت‌نام کاربران در طول زمان"
+
+msgid "Daily user registrations"
+msgstr "ثبت‌نام روزانه کاربران"
