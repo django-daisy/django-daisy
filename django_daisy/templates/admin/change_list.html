@@ -361,7 +361,8 @@
                     }
                     updateFilterButton();
                     if (filterToggle.checked) {
-                        closeFilter.focus();
+                        // Focusing the offscreen button must not scroll the drawer during its transition.
+                        closeFilter.focus({preventScroll: true});
                     }
                 });
                 closeFilter.addEventListener('click', closeFilterSidebar);
