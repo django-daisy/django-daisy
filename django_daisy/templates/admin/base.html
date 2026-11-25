@@ -11,6 +11,16 @@
 
 <head>
     <script>
+        // Apply the saved sidebar width before the first layout.
+        try {
+            const sidebarWidth = Number(localStorage.getItem('django-daisy-sidebar-width'));
+            if (Number.isFinite(sidebarWidth) && sidebarWidth > 0) {
+                document.documentElement.style.setProperty('--sidebar-width', `${sidebarWidth}px`);
+            }
+        } catch {
+            // The stylesheet supplies the default width when storage is unavailable.
+        }
+
         /* set selected theme before everything
         * to avoid color flash on refresh
         *  */
@@ -70,7 +80,7 @@
         <link rel="stylesheet" href="{% static 'admin/css/app.css' %}?v=4">
     {% endif %}
 
-    <link href="{% static 'admin/css/customized_components.css' %}?v=6" rel="stylesheet">
+    <link href="{% static 'admin/css/customized_components.css' %}?v=7" rel="stylesheet">
     <link href="{% static 'admin/css/retro.css' %}" rel="stylesheet">
     {% if global_search_url %}<link href="{% static 'admin/css/global_search.css' %}" rel="stylesheet">{% endif %}
 
@@ -201,7 +211,7 @@
 <script src="{% static "admin/js/theme-change.js" %}"></script>
 <script src="{% static "admin/js/vendor/tom-select.complete.min.js" %}"></script>
 <script defer src="{% static 'admin/js/SelectBox.js' %}"></script>
-<script src="{% static 'admin/js/admin/dashboard.js' %}"></script>
+<script src="{% static 'admin/js/admin/dashboard.js' %}?v=3"></script>
 {% if global_search_url %}<script defer src="{% static 'admin/js/admin/global_search.js' %}"></script>{% endif %}
 {% for custom_script_link in EXTRA_SCRIPTS %}
     <script src="{{ custom_script_link }}"></script>

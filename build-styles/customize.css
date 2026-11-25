@@ -317,6 +317,57 @@ li[aria-selected="true"] {
     display: none;
 }
 
+#sidebar > .menu {
+    width: 100%;
+}
+
+.sidebar-resize-handle {
+    display: none;
+}
+
+@media (width >= 64rem) {
+    #sidebar {
+        position: relative;
+        flex: none;
+        width: var(--sidebar-width, 14rem);
+        min-width: 12rem;
+        max-width: min(26rem, calc(100vw - 43rem));
+    }
+
+    #sidebar ~ .content-wrapper {
+        min-width: 0;
+    }
+
+    .sidebar-resize-handle {
+        position: absolute;
+        inset-block: 0;
+        inset-inline-end: 0;
+        z-index: 1;
+        display: block;
+        width: 8px;
+        cursor: ew-resize;
+        touch-action: none;
+    }
+
+    .sidebar-resize-handle:is(:hover, :focus-visible)::after,
+    .sidebar.is-resizing .sidebar-resize-handle::after {
+        content: '';
+        position: absolute;
+        inset-block: 0;
+        inset-inline-end: 0;
+        width: 3px;
+        background: var(--color-primary);
+    }
+
+    body:has(.sidebar.is-resizing) {
+        user-select: none;
+    }
+
+    .sidebar.is-resizing ~ .content-wrapper {
+        transition: none;
+    }
+}
+
 @media (max-width: 63.999rem) {
     #sidebar {
         position: fixed;
@@ -333,10 +384,6 @@ li[aria-selected="true"] {
 
     #sidebar.is-open {
         display: flex;
-    }
-
-    #sidebar .menu {
-        width: 100%;
     }
 
     .sidebar-overlay.is-open {

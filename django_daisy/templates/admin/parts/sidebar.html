@@ -1,7 +1,9 @@
 {% load i18n %}
 {% load static %}
-<nav id="sidebar" class="flex max-lg:hidden flex-col justify-between sidebar bg-base-100 border-base-200 border-e w-56"
+<nav id="sidebar" class="flex max-lg:hidden flex-col justify-between sidebar bg-base-100 border-base-200 border-e"
      aria-label="{% trans 'Main navigation' %}">
+    <div id="sidebar-resize-handle" class="sidebar-resize-handle" role="separator" tabindex="0"
+         aria-label="{% trans 'Resize navigation sidebar' %}" aria-orientation="vertical" aria-controls="sidebar"></div>
     <!-- Sidebar header with logo -->
     <a class="flex flex-row h-16 items-center" href="{% url 'admin:index' %}">
         {% if logo %}
@@ -30,7 +32,7 @@
     </a>
 
     <!-- Sidebar menu -->
-    <ul class="menu rounded-box mb-auto w-56 max-sm:w-43 max-sm:text-xs">
+    <ul class="menu rounded-box mb-auto max-sm:text-xs">
         <!-- Dashboard link -->
         <li>
             <a href="{% url 'admin:index' %}">
@@ -79,7 +81,7 @@
     </ul>
 
     {% if not app_list %}
-        <ul class="menu rounded-box w-56">
+        <ul class="menu rounded-box">
             <li>{% translate 'You don’t have permission to view or edit anything.' %}</li>
         </ul>
     {% endif %}
