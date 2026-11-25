@@ -1,0 +1,73 @@
+[data-theme="retro"] {
+    color-scheme: light;
+    --color-base-100: #f3e8d6;
+    --color-base-200: #ecdbc0;
+    --color-base-300: #ddc9a9;
+    --color-base-content: #211c17;
+    --color-primary: #a54131;
+    --color-primary-content: #fff3e3;
+    --color-secondary: #d1ad5c;
+    --color-secondary-content: #352315;
+    --color-accent: #255a43;
+    --color-accent-content: #fff3e3;
+    --color-neutral: #1e1d19;
+    --color-neutral-content: #e2c790;
+    --color-info: #1b304f;
+    --color-info-content: #fff3e3;
+    --color-success: #17564e;
+    --color-success-content: #fff3e3;
+    --color-warning: #cc7e47;
+    --color-warning-content: #2e1a0f;
+    --color-error: #a32c41;
+    --color-error-content: #fff3e3;
+}
+
+:root[data-theme="retro"] #sidebar {
+    color-scheme: dark;
+    --color-base-100: var(--color-neutral);
+    --color-base-200: #302a22;
+    --color-base-300: #42372a;
+    --color-base-content: var(--color-neutral-content);
+    color: var(--color-base-content);
+}
+
+:root[data-theme="retro"] .dashboard-stat,
+:root[data-theme="retro"] .dashboard-card,
+:root[data-theme="retro"] .dashboard-action {
+    border-color: var(--color-neutral);
+}
+
+:root[data-theme="retro"] .dashboard-stat {
+    --dashboard-accent: var(--color-info);
+    background: #98a88a;
+    color: var(--dashboard-accent);
+}
+
+:root[data-theme="retro"] .dashboard-stat:nth-child(4n+2) {
+    --dashboard-accent: #531f16;
+    background: var(--color-secondary);
+}
+
+:root[data-theme="retro"] .dashboard-stat:nth-child(4n+3) {
+    --dashboard-accent: #411c12;
+    background: var(--color-warning);
+}
+
+:root[data-theme="retro"] .dashboard-stat:nth-child(4n+4) {
+    --dashboard-accent: #2e160e;
+    background: #c25b30;
+}
+
+:root[data-theme="retro"] .dashboard-stat .dashboard-muted {
+    color: inherit;
+}
+
+:root[data-theme="retro"] .dashboard-action {
+    --dashboard-accent: var(--color-secondary-content);
+    background: #c9aa7e;
+}
+
+:root[data-theme="retro"] .dashboard-action:hover {
+    background: var(--color-secondary);
+    color: var(--color-secondary-content);
+}

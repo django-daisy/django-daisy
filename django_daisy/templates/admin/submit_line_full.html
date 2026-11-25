@@ -15,8 +15,8 @@
             </button>
         </div>
     {% else %}
-        <div class="p-3 bg-base-100 justify-between flex flex-row-reverse gap-15 sticky top-3 max-md:hidden">
-            <div class="text-start flex gap-2">
+        <div class="p-3 bg-base-100 justify-between flex flex-row-reverse flex-wrap gap-3 max-md:hidden">
+            <div class="text-start flex flex-wrap items-center gap-2">
                 {% if show_save_as_new %}
                     <input type="submit" value="{% translate 'Save as new' %}" name="_saveasnew">
                 {% endif %}
@@ -71,7 +71,7 @@
                 <summary type="button" tabindex="0" role="button"
                          class="btn btn-sm btn-block">{% trans "Options" %}</summary>
                 <div tabindex="0"
-                     class="dropdown-content min-w-full w-max menu bg-base-100 rounded-box z-[1] mb-1 border p-2 shadow">
+                     class="dropdown-content change-form-action-options min-w-full w-max menu bg-base-100 rounded-box z-[1] mb-1 border p-2 shadow">
                     {% if show_save_as_new %}
                         <input type="submit" value="{% translate 'Save as new' %}" name="_saveasnew">
                     {% endif %}

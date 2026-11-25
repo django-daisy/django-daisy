@@ -279,6 +279,28 @@ li[aria-selected="true"] {
     }
 }
 
+/* ─── Change Form Actions ────────────────────────────────── */
+
+.change-form-actions {
+    @apply sticky bottom-0 z-20 w-full rounded-box border-t border-base-300 bg-base-100;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.change-form-actions-full {
+    @apply rounded-md;
+}
+
+.change-form-actions > div {
+    border-radius: inherit;
+}
+
+.change-form-action-options {
+    inset-inline-start: 0;
+    max-width: calc(100vw - 3rem);
+    max-height: 50dvh;
+    overflow-y: auto;
+}
+
 /* ─── User Form ──────────────────────────────────────────── */
 
 #user_form .field-password a {
