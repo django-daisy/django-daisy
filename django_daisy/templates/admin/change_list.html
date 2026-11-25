@@ -26,6 +26,38 @@
             position: relative;
             z-index: 1;
         }
+
+        .changelist-results input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .changelist-results input[type="number"]::-webkit-inner-spin-button,
+        .changelist-results input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        #changelist-filter > .card-body {
+            max-width: calc(100vw - 2rem);
+        }
+
+        @media (min-width: 64rem) {
+            [data-filter-sidebar] > #changelist-filter,
+            [data-filter-sidebar] > #changelist-filter > .card-body {
+                transition: none;
+            }
+
+            [data-filter-sidebar="closed"] > #changelist-filter {
+                display: none;
+            }
+        }
+
+        @media (64rem <= width < 1920px) {
+            [data-filter-sidebar="auto"] > #changelist-filter {
+                display: none;
+            }
+        }
     </style>
     {% if not actions_on_top and not actions_on_bottom %}
         <style>
@@ -77,8 +109,9 @@
     {% endif %}
 
     <!-- Start of drawer component -->
-    <div class="drawer drawer-end  {% if SHOW_CHANGELIST_FILTER %} lg:drawer-open {% endif %} ">
-        <input id="filter-drawer" type="checkbox" class="drawer-toggle"/>
+    <div class="drawer drawer-end{% if cl.has_filters and SHOW_CHANGELIST_FILTER %} lg:drawer-open{% endif %}"
+         {% if cl.has_filters and SHOW_CHANGELIST_FILTER %}data-filter-sidebar="auto"{% endif %}>
+        <input id="filter-drawer" type="checkbox" class="drawer-toggle" tabindex="-1"/>
 
         <!-- Main content section -->
         <div class="drawer-content flex flex-col min-w-0 w-full h-full">
@@ -107,17 +140,19 @@
                                     {% endif %}
                                     {% block object-tools-items %}
                                         {% change_list_object_tools %}
-                                        <div class="indicator {% if SHOW_CHANGELIST_FILTER %} xl:hidden {% endif %}">
-                                            {% if active_filters_count %}
-                                                <span class="indicator-item badge badge-info">{{ active_filters_count }}</span>
-                                            {% endif %}
-                                            {% if cl.list_filter %}
+                                        {% if cl.has_filters %}
+                                            <div class="indicator">
+                                                {% if active_filters_count %}
+                                                    <span class="indicator-item badge badge-info">{{ active_filters_count }}</span>
+                                                {% endif %}
                                                 <button type="button" id="open-filter-drawer"
+                                                        aria-label="{% translate 'Filter' %}"
+                                                        aria-controls="changelist-filter" aria-expanded="false"
                                                         class="btn btn-sm btn-primary drawer-button">
-                                                    <i class="fa fa-filter"></i>
+                                                    <i class="fa fa-filter" aria-hidden="true"></i>
                                                 </button>
-                                            {% endif %}
-                                        </div>
+                                            </div>
+                                        {% endif %}
                                     {% endblock %}
                                 {% endblock %}
                             </div>
@@ -144,7 +179,7 @@
         {% if cl.has_filters %}
             <!-- Filter section -->
             <div id="changelist-filter"
-                 class="drawer-side {% if SHOW_CHANGELIST_FILTER %} shadow-md rounded-md lg:ms-2 card-bordered {% endif %} !overflow-visible  z-10 h-full">
+                 class="drawer-side {% if SHOW_CHANGELIST_FILTER %}shadow-md rounded-md lg:ms-2 card-bordered {% endif %}!overflow-visible z-10 h-full">
                 <label for="filter-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
                 <div class="card-body rounded-md p-3 bg-base-100 w-80 h-full">
                     <div class="card-header flex justify-between p-2">
@@ -242,12 +277,44 @@
                 window.location.href = $(this).val()
             })
 
-            $("#open-filter-drawer").on("click", function () {
-                const checkbox = $("#filter-drawer")[0];
-                if (checkbox) {
-                    checkbox.checked = !checkbox.checked; // Toggles the 'checked' state
+            const filterButton = document.getElementById('open-filter-drawer');
+            const filterToggle = document.getElementById('filter-drawer');
+            if (filterButton && filterToggle) {
+                const drawer = filterToggle.parentElement;
+                const opensInline = drawer.hasAttribute('data-filter-sidebar');
+                const desktop = window.matchMedia('(min-width: 64rem)');
+                const fullHd = window.matchMedia('(min-width: 1920px)');
+
+                function isInlineSidebarOpen() {
+                    const state = drawer.dataset.filterSidebar;
+                    return state === 'open' || (state === 'auto' && fullHd.matches);
                 }
-            });
+
+                function updateFilterButton() {
+                    const expanded = opensInline && desktop.matches
+                        ? isInlineSidebarOpen()
+                        : filterToggle.checked;
+                    filterButton.setAttribute('aria-expanded', String(expanded));
+                }
+
+                filterButton.addEventListener('click', function () {
+                    if (opensInline && desktop.matches) {
+                        drawer.dataset.filterSidebar = isInlineSidebarOpen() ? 'closed' : 'open';
+                    } else {
+                        filterToggle.checked = !filterToggle.checked;
+                    }
+                    updateFilterButton();
+                });
+                filterToggle.addEventListener('change', updateFilterButton);
+                if (opensInline) {
+                    desktop.addEventListener('change', function () {
+                        filterToggle.checked = false;
+                        updateFilterButton();
+                    });
+                    fullHd.addEventListener('change', updateFilterButton);
+                }
+                updateFilterButton();
+            }
 
             function submit_search_form() {
                 let search_val = $('#changelist-form #searchbar').val()

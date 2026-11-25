@@ -307,6 +307,44 @@ li[aria-selected="true"] {
     @apply link link-primary;
 }
 
+/* ─── Compact Desktop Spacing ────────────────────────────── */
+
+@media (64rem <= width < 90rem) {
+    .content-wrapper > .content-header {
+        padding-inline: 1rem;
+        padding-block-start: .75rem;
+    }
+
+    .content-wrapper > .main-content {
+        padding: .75rem 1rem;
+    }
+
+    .changelist-toolbar {
+        padding-block-start: .5rem;
+    }
+
+    .changelist-toolbar > .object-tools {
+        padding-block: .5rem;
+    }
+
+    .changelist-results > .table tr > :is(th, td) {
+        padding: .5rem .75rem;
+    }
+
+    #changelist-filter > .card-body {
+        gap: .5rem;
+    }
+
+    .main-content .module.aligned > .form-row {
+        gap: .75rem;
+        margin-block-end: .5rem;
+    }
+
+    .change-form-actions > div {
+        padding: .5rem;
+    }
+}
+
 /* ─── Responsive Navigation ──────────────────────────────── */
 
 .sidebar-overlay {

@@ -109,6 +109,34 @@
 .dashboard-user { display: flex; align-items: center; gap: .6rem; white-space: nowrap; }
 .dashboard-avatar { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 1.9rem; height: 1.9rem; border-radius: 50%; background: color-mix(in oklab, var(--color-primary) 14%, transparent); color: var(--color-primary); font-size: .75rem; font-weight: 700; }
 .dashboard-empty { padding: 2rem !important; color: color-mix(in oklab, var(--color-base-content) 60%, transparent); text-align: center !important; }
+@media (64rem <= width < 90rem) {
+    .daisy-dashboard {
+        margin-top: .5rem;
+    }
+    .daisy-dashboard, .dashboard-middle {
+        gap: 1rem;
+    }
+    .dashboard-stats, .dashboard-actions {
+        gap: .75rem;
+    }
+    .dashboard-stat {
+        min-height: 8rem;
+        padding: 1.125rem;
+    }
+    .dashboard-stat::after {
+        inset-inline-start: 1.125rem;
+    }
+    .dashboard-card {
+        padding: 1.125rem;
+    }
+    .dashboard-section-heading {
+        margin-bottom: 1rem;
+    }
+    .dashboard-action {
+        min-height: 5.5rem;
+        padding: .625rem;
+    }
+}
 @media (max-width: 1050px) { .dashboard-middle { grid-template-columns: 1fr; } .dashboard-actions { height: auto; } }
 @media (max-width: 800px) { .dashboard-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .dashboard-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dashboard-legend { justify-content: flex-start; } .dashboard-card { padding: 1.1rem; } .dashboard-stat { min-height: 8rem; padding: 1rem; } .dashboard-stat::after { inset-inline-start: 1rem; } .dashboard-stat-value { font-size: 1.6rem; } .dashboard-stat .dashboard-icon { width: 2rem; height: 2rem; } }
