@@ -1,11 +1,26 @@
 {% load i18n %}
+{% load static %}
 <nav id="sidebar" class="flex max-lg:hidden flex-col justify-between sidebar bg-base-100 border-base-200 border-e w-56"
      aria-label="{% trans 'Main navigation' %}">
     <!-- Sidebar header with logo -->
     <a class="flex flex-row h-16 items-center" href="{% url 'admin:index' %}">
         {% if logo %}
             <div class="w-full">
-                <img loading="lazy" class="max-h-20 p-2 m-auto max-w-32" src="{{ logo }}">
+                {% if logo == default_logo %}
+                    {% firstof SITE_LOGO_DARK default_logo_dark as logo_dark %}
+                {% else %}
+                    {% firstof SITE_LOGO_DARK as logo_dark %}
+                {% endif %}
+                <img src="{{ logo }}"
+                     {% if logo == default_logo %}
+                     class="m-auto" width="192" height="64" alt="Django Daisy"
+                     {% else %}
+                     loading="lazy" class="max-h-20 p-2 m-auto max-w-32" alt="{{ site_title }}"
+                     {% endif %}
+                     {% if logo_dark and logo_dark != logo %}data-logo-dark="{{ logo_dark }}"{% endif %}>
+                {% if logo_dark and logo_dark != logo %}
+                    <script defer src="{% static 'admin/js/logo-theme.js' %}?v=2"></script>
+                {% endif %}
             </div>
         {% else %}
             <div class="w-full">

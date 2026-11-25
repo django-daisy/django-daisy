@@ -132,7 +132,8 @@ DAISY_SETTINGS = {
     'SITE_TITLE': 'Django Admin',
     'SITE_HEADER': 'Administration',
     'INDEX_TITLE': 'Hi, welcome to your dashboard',
-    'SITE_LOGO': '/static/admin/img/daisyui-logomark.svg',
+    'SITE_LOGO': '/static/admin/img/django-daisy-logo.svg',
+    'SITE_LOGO_DARK': None,  # Uses the bundled dark logo or reuses your custom SITE_LOGO
     
     # Customization
     'EXTRA_STYLES': [],  # Additional CSS files

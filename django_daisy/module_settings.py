@@ -3,12 +3,16 @@ from django.utils.translation import gettext_lazy as _
 
 from django_daisy._helpers import ASSET_PATH
 
+DEFAULT_SITE_LOGO = f"{ASSET_PATH}admin/img/django-daisy-logo.svg"
+DEFAULT_SITE_LOGO_DARK = f"{ASSET_PATH}admin/img/django-daisy-logo-dark.svg"
+
 # Define defaults for DAISY_SETTINGS
 DEFAULT_DAISY_SETTINGS = {
     "SITE_TITLE": "Django Admin",
     "SITE_HEADER": "Administration",
     "INDEX_TITLE": "hi, welcome to your dashboard",
-    "SITE_LOGO": f"{ASSET_PATH}admin/img/daisyui-logomark.svg",
+    "SITE_LOGO": DEFAULT_SITE_LOGO,
+    "SITE_LOGO_DARK": None,
     "EXTRA_STYLES": [],
     "EXTRA_SCRIPTS": [],
     "LOAD_FULL_STYLES": False,

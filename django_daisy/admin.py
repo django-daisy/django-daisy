@@ -11,8 +11,11 @@ from django.views.decorators.http import require_GET
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from django_daisy._helpers import ASSET_PATH
-from django_daisy.module_settings import DAISY_SETTINGS
+from django_daisy.module_settings import (
+    DAISY_SETTINGS,
+    DEFAULT_SITE_LOGO,
+    DEFAULT_SITE_LOGO_DARK,
+)
 from django_daisy.dashboard import build_dashboard
 
 logger = logging.getLogger(__name__)
@@ -30,9 +33,7 @@ class DaisyAdminSite(admin.AdminSite):
     site_title = DAISY_SETTINGS.get("SITE_TITLE", "django admin")
     site_header = DAISY_SETTINGS.get("SITE_HEADER", "Administration")
     index_title = DAISY_SETTINGS.get("INDEX_TITLE", "hi, welcome to your dashboard")
-    logo = DAISY_SETTINGS.get(
-        "SITE_LOGO", f"{ASSET_PATH}admin/img/daisyui-logomark.svg"
-    )
+    logo = DAISY_SETTINGS["SITE_LOGO"]
 
     def get_urls(self):
         urls = [
@@ -142,6 +143,8 @@ class DaisyAdminSite(admin.AdminSite):
             **DAISY_SETTINGS,
             "change_language_url": change_language_url,
             "logo": self.get_logo(request),
+            "default_logo": DEFAULT_SITE_LOGO,
+            "default_logo_dark": DEFAULT_SITE_LOGO_DARK,
             "can_delete_popup": "",
             "use_i18n": getattr(settings, "USE_I18N", False),
             "global_search_url": search_url,
