@@ -22,6 +22,10 @@
             overflow-x: auto;
         }
 
+        .changelist-results:focus-visible {
+            box-shadow: 0 0 0 2px var(--color-primary);
+        }
+
         .changelist-results thead {
             position: relative;
             z-index: 1;
@@ -40,9 +44,43 @@
 
         #changelist-filter > .card-body {
             max-width: calc(100vw - 2rem);
+            min-height: 100%;
+        }
+
+        #changelist-filter .card-header {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        #filter-drawer:checked ~ #changelist-filter {
+            transition: opacity .2s ease-out;
+        }
+
+        @media (width < 48rem) {
+            .changelist-toolbar {
+                padding: .5rem;
+            }
+
+            .changelist-toolbar > .object-tools {
+                padding: 0;
+                justify-content: flex-end;
+            }
+        }
+
+        @media (width < 48rem) or (height < 32rem) {
+            .changelist-toolbar {
+                position: static;
+            }
         }
 
         @media (min-width: 64rem) {
+            [data-filter-sidebar] > #changelist-filter {
+                align-self: start;
+                height: auto;
+                max-height: 100dvh;
+            }
+
             [data-filter-sidebar] > #changelist-filter,
             [data-filter-sidebar] > #changelist-filter > .card-body {
                 transition: none;
@@ -163,7 +201,8 @@
                             {% endif %}
 
                             {% block result_list %}
-                                <div class="changelist-results">
+                                <div class="changelist-results" tabindex="0" role="region"
+                                     aria-label="{{ cl.opts.verbose_name_plural|capfirst }}">
                                     {% daisy_result_list cl %}
                                 </div>
                             {% endblock %}
@@ -179,13 +218,19 @@
         {% if cl.has_filters %}
             <!-- Filter section -->
             <div id="changelist-filter"
-                 class="drawer-side {% if SHOW_CHANGELIST_FILTER %}shadow-md rounded-md lg:ms-2 card-bordered {% endif %}!overflow-visible z-10 h-full">
-                <label for="filter-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-                <div class="card-body rounded-md p-3 bg-base-100 w-80 h-full">
-                    <div class="card-header flex justify-between p-2">
+                 class="drawer-side {% if SHOW_CHANGELIST_FILTER %}shadow-md rounded-md lg:ms-2 card-bordered {% endif %}z-10">
+                <label for="filter-drawer" class="drawer-overlay"></label>
+                <div class="card-body rounded-md p-3 bg-base-100 w-80">
+                    <div class="card-header flex items-center justify-between gap-2 p-2 bg-base-100">
                         <h2 class="font-bold">{% translate 'Filter' %}</h2>
-                        <button id="apply-filter" type="button"
-                                class="btn btn-sm btn-primary">{% trans "Filter" %}</button>
+                        <div class="flex items-center gap-2">
+                            <button id="apply-filter" type="button"
+                                    class="btn btn-sm btn-primary">{% trans "Filter" %}</button>
+                            <button id="close-filter-drawer" type="button" class="btn btn-sm btn-square btn-ghost"
+                                    aria-label="{% translate 'Close' %}">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            </button>
+                        </div>
                     </div>
                     {% if cl.is_facets_optional or active_filters_count %}
                         <div id="changelist-filter-extra-actions" class="mb-2 flex justify-between">
@@ -243,7 +288,7 @@
                 function updateHeaderPosition() {
                     const headerBounds = header.getBoundingClientRect();
                     const headerTop = headerBounds.top - headerOffset;
-                    const offset = toolbar.getBoundingClientRect().bottom - headerTop;
+                    const offset = Math.max(0, toolbar.getBoundingClientRect().bottom) - headerTop;
                     const limit = table.getBoundingClientRect().bottom - headerTop - headerBounds.height;
                     headerOffset = Math.max(0, Math.min(offset, limit));
                     header.style.transform = `translateY(${headerOffset}px)`;
@@ -279,7 +324,8 @@
 
             const filterButton = document.getElementById('open-filter-drawer');
             const filterToggle = document.getElementById('filter-drawer');
-            if (filterButton && filterToggle) {
+            const closeFilter = document.getElementById('close-filter-drawer');
+            if (filterButton && filterToggle && closeFilter) {
                 const drawer = filterToggle.parentElement;
                 const opensInline = drawer.hasAttribute('data-filter-sidebar');
                 const desktop = window.matchMedia('(min-width: 64rem)');
@@ -297,6 +343,16 @@
                     filterButton.setAttribute('aria-expanded', String(expanded));
                 }
 
+                function closeFilterSidebar() {
+                    if (opensInline && desktop.matches) {
+                        drawer.dataset.filterSidebar = 'closed';
+                    } else {
+                        filterToggle.checked = false;
+                    }
+                    updateFilterButton();
+                    filterButton.focus();
+                }
+
                 filterButton.addEventListener('click', function () {
                     if (opensInline && desktop.matches) {
                         drawer.dataset.filterSidebar = isInlineSidebarOpen() ? 'closed' : 'open';
@@ -304,8 +360,20 @@
                         filterToggle.checked = !filterToggle.checked;
                     }
                     updateFilterButton();
+                    if (filterToggle.checked) {
+                        closeFilter.focus();
+                    }
                 });
-                filterToggle.addEventListener('change', updateFilterButton);
+                closeFilter.addEventListener('click', closeFilterSidebar);
+                filterToggle.addEventListener('change', function () {
+                    updateFilterButton();
+                    if (!filterToggle.checked) filterButton.focus();
+                });
+                document.getElementById('changelist-filter').addEventListener('keydown', function (event) {
+                    if (event.key === 'Escape' && filterToggle.checked && !event.defaultPrevented) {
+                        closeFilterSidebar();
+                    }
+                });
                 if (opensInline) {
                     desktop.addEventListener('change', function () {
                         filterToggle.checked = false;

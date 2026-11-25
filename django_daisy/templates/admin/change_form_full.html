@@ -58,7 +58,7 @@
                 {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}">{% endif %}
                 {% if save_on_top %}
                     {% block submit_buttons_top %}
-                        <div class="justify-end space-x-2">
+                        <div class="change-form-actions-top justify-end space-x-2">
                             {% submit_row %}
                         </div>
                     {% endblock %}
@@ -81,19 +81,24 @@
                             </div>
                         </div>
                     {% endif %}
-                    <div role="tablist" class="w-full items-start tabs tabs-lift overflow-visible ">
+                    <div role="tablist" class="change-form-tabs w-full items-start tabs tabs-lift overflow-visible"
+                         {% if 'navtab' in adminform.fieldsets.0.1.classes %}data-prefer-named-tab{% endif %}>
                         {% block field_sets %}
-                            <a class="indicator tab tab-active">
-                                {{ adminform.fieldsets.0.0|default:opts.verbose_name }}
-                                <i class="text-base-info opacity-50 fa mx-1 {% get_app_icon adminform.model_admin opts.app_config %} p-1 rounded"></i>
+                            <button type="button" class="indicator tab tab-active">
+                                {% if 'navtab' in adminform.fieldsets.0.1.classes %}
+                                    {% translate "General" %}
+                                {% else %}
+                                    {{ adminform.fieldsets.0.0|default:opts.verbose_name }}
+                                {% endif %}
+                                <i aria-hidden="true" class="text-base-info opacity-50 fa mx-1 {% get_app_icon adminform.model_admin opts.app_config %} p-1 rounded"></i>
                                 {% with total_errors=adminform.form|sum_errors %}
                                     {% if total_errors > 0 %}
                                         <span class="indicator-item indicator-bottom indicator-center badge badge-error  badge-sm">{{ total_errors }}</span>
                                     {% endif %}
                                 {% endwith %}
-                            </a>
+                            </button>
 
-                            <div role="tabpanel" class="tab-content">
+                            <div role="tabpanel" class="tab-content" data-default-form-panel>
                                 {% for fieldset in adminform %}
                                     {% if 'navtab' not in fieldset.classes %}
                                         <fieldset
@@ -130,15 +135,15 @@
 
                             {% for fieldset in adminform %}
                                 {% if 'navtab' in fieldset.classes %}
-                                    <a class="indicator tab">
+                                    <button type="button" class="indicator tab">
                                         {{ fieldset.name|default:opts.verbose_name }}
-                                        <i class="text-base-info opacity-50 fa mx-1 {% get_app_icon adminform.model_admin opts.app_config %} p-1 rounded"></i>
+                                        <i aria-hidden="true" class="text-base-info opacity-50 fa mx-1 {% get_app_icon adminform.model_admin opts.app_config %} p-1 rounded"></i>
                                         {% with total_errors=adminform.form|sum_errors %}
                                             {% if total_errors > 0 %}
                                                 <span class="indicator-item indicator-bottom indicator-center badge badge-error  badge-sm">{{ total_errors }}</span>
                                             {% endif %}
                                         {% endwith %}
-                                    </a>
+                                    </button>
                                     <fieldset
                                             class="mb-3 tab-content hidden ltr:!rounded-tl-none rtl:!rounded-tr-none  w-full collapse-arrow overflow-visible fieldset card bg-base-100 p-1">
                                         <div class="collapse-title text-xl font-medium">
@@ -159,16 +164,16 @@
                         {% block inline_field_sets %}
                             {% for inline_admin_formset in inline_admin_formsets %}
                                 {% if inline_admin_formset.opts.is_navtab %}
-                                    <a class="indicator tab">
+                                    <button type="button" class="indicator tab">
                                         {{ inline_admin_formset.opts.verbose_name_plural }}
-                                        <i class="text-base-info  opacity-50 fa mx-1 {{ inline_admin_formset.opts.icon }} p-1 rounded"></i>
+                                        <i aria-hidden="true" class="text-base-info  opacity-50 fa mx-1 {{ inline_admin_formset.opts.icon }} p-1 rounded"></i>
 
                                         {% with total_errors=inline_admin_formset|sum_errors %}
                                             {% if total_errors > 0 %}
                                                 <span class="badge badge-error  badge-sm indicator-item indicator-bottom indicator-center">{{ total_errors }}</span>
                                             {% endif %}
                                         {% endwith %}
-                                    </a>
+                                    </button>
                                     <fieldset role="tabpanel"
                                               class="mb-3 tab-content hidden overflow-hidden collapse-arrow fieldset card bg-base-100 p-1">
                                         <div class="p-3 overflow-x-auto overflow-y-visible">
@@ -201,22 +206,7 @@
                 {% endif %}
                 async>
         </script>
-        <script>
-            $(document).ready(function () {
-                $('.tab').each(function (index) {
-                    $(this).on('click', function () {
-                        // Remove 'tab-active' from all tabs
-                        $('.tab').removeClass('tab-active');
-                        // Hide all tab content
-                        $('.tab-content').addClass('hidden');
-                        // Add 'tab-active' to the clicked tab
-                        $(this).addClass('tab-active');
-                        // Show the corresponding tab content
-                        $('.tab-content').eq(index).removeClass('hidden');
-                    });
-                });
-            });
-        </script>
+        <script src="{% static 'admin/js/admin/change_form_tabs.js' %}" defer></script>
         {# JavaScript for prepopulated fields #}
         {% prepopulated_fields_js %}
     {% endblock %}

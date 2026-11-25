@@ -175,11 +175,7 @@ Requires core.js and SelectBox.js.
             SelectFilter.refresh_icons(field_id);
         },
         any_selected: function(field) {
-            // Temporarily add the required attribute and check validity.
-            field.required = true;
-            const any_selected = field.checkValidity();
-            field.required = false;
-            return any_selected;
+            return field.selectedOptions.length > 0;
         },
         refresh_icons: function(field_id) {
             const from = document.getElementById(field_id + '_from');

@@ -19,7 +19,7 @@
         {% if pagination_required %}
             {% for i in page_range %}
                 {% if i == cl.page_num %}
-                    <button class="join-item btn-sm btn btn-primary btn-active">{{ i }}</button>
+                    <span class="join-item btn-sm btn btn-primary btn-active" aria-current="page">{{ i }}</span>
                 {% else %}
                     <a href="{% get_page_link cl i %}" class="join-item btn btn-sm">{{ i }}</a>
                 {% endif %}

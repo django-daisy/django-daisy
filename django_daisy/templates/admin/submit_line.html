@@ -72,7 +72,7 @@
                 {% translate 'Close' %}
                 <i class="fas fa-times px-1"></i>
             </button>
-        {% else %}
+        {% elif show_save_and_continue or show_save_and_add_another or show_save_as_new or show_delete_link and original or can_delete_popup or show_close %}
             <details class="dropdown dropdown-top w-full">
                 <summary type="button" role="button"
                          class="btn btn-soft btn-default btn-sm btn-block">{% trans "Options" %}</summary>

@@ -1,5 +1,5 @@
 {% load i18n %}
-<div class="navbar bg-base-100">
+<div class="admin-navbar navbar bg-base-100">
     <div class="navbar-start">
         <button id="menu-toggle" type="button" class="btn btn-ghost btn-circle"
                 aria-label="{% trans 'Toggle navigation menu' %}" aria-controls="sidebar" aria-expanded="false">
@@ -18,9 +18,9 @@
         </button>
         {% if global_search_url %}{% include 'admin/parts/global_search.html' %}{% endif %}
     </div>
-    <div class="navbar-center max-sm:hidden">
+    <div class="navbar-center">
         <a class="btn btn-ghost  text-xl" href="{% url 'admin:index' %}">
-            {{ site_header|default:'Django site admin' }}
+            <span>{{ site_header|default:'Django site admin' }}</span>
         </a>
     </div>
     <div class="navbar-end">
