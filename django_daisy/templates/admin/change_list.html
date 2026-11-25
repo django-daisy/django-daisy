@@ -11,6 +11,22 @@
         <script src="{% url 'admin:jsi18n' %}"></script>
     {% endif %}
     {{ media.css }}
+    <style>
+        .changelist-toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .changelist-results {
+            overflow-x: auto;
+        }
+
+        .changelist-results thead {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
     {% if not actions_on_top and not actions_on_bottom %}
         <style>
             #changelist table thead th:first-child {
@@ -65,8 +81,8 @@
         <input id="filter-drawer" type="checkbox" class="drawer-toggle"/>
 
         <!-- Main content section -->
-        <div class="drawer-content flex flex-col w-full h-full">
-            <div id="content-main" class="card overflow-hidden w-full h-full flex">
+        <div class="drawer-content flex flex-col min-w-0 w-full h-full">
+            <div id="content-main" class="card w-full h-full flex">
                 <div class="bg-base-100 w-full card-bordered flex-col flex-1 ">
                     <div class="hidden" id="hidden-search-form">
                         <form method="get">
@@ -77,7 +93,7 @@
                     <form id="changelist-form" method="post"{% if cl.formset and cl.formset.is_multipart %}
                           enctype="multipart/form-data"{% endif %} novalidate>
                         {% csrf_token %}
-                        <div class="flex gap-2 flex-wrap items-center justify-between sm:px-3 px-1 pt-3">
+                        <div class="changelist-toolbar bg-base-100 flex gap-2 flex-wrap items-center justify-between sm:px-3 px-1 pt-3">
                             {% block search %}{% search_form cl %}{% endblock %}
                             {% if action_form and actions_on_top and cl.show_admin_actions %}
                                 {% admin_actions %}
@@ -112,7 +128,7 @@
                             {% endif %}
 
                             {% block result_list %}
-                                <div class="overflow-auto max-h-[65vh]">
+                                <div class="changelist-results">
                                     {% daisy_result_list cl %}
                                 </div>
                             {% endblock %}
@@ -179,6 +195,35 @@
 {% block scripts %}
     {{ block.super }}
     <script>
+        {
+            const toolbar = document.querySelector('.changelist-toolbar');
+            const table = document.querySelector('.changelist-results table');
+            const header = table?.tHead;
+
+            if (toolbar && header) {
+                let headerOffset = 0;
+
+                // The horizontal scroll wrapper captures CSS sticky positioning.
+                // Move the original header with page scroll so columns stay aligned.
+                function updateHeaderPosition() {
+                    const headerBounds = header.getBoundingClientRect();
+                    const headerTop = headerBounds.top - headerOffset;
+                    const offset = toolbar.getBoundingClientRect().bottom - headerTop;
+                    const limit = table.getBoundingClientRect().bottom - headerTop - headerBounds.height;
+                    headerOffset = Math.max(0, Math.min(offset, limit));
+                    header.style.transform = `translateY(${headerOffset}px)`;
+                }
+
+                const resizeObserver = new ResizeObserver(updateHeaderPosition);
+                resizeObserver.observe(toolbar);
+                resizeObserver.observe(table);
+                resizeObserver.observe(header);
+                window.addEventListener('scroll', updateHeaderPosition, {passive: true});
+                window.addEventListener('resize', updateHeaderPosition);
+                updateHeaderPosition();
+            }
+        }
+
         $(document).ready(function () {
             $('.filter-select').each(function (i, elem) {
                 let maxItems = 1
