@@ -1,10 +1,16 @@
-# Django Daisy v2.0 🌼
+# Django Daisy v2.1 🌼
 
 ![Test Status](https://github.com/hypy13/django-daisy/actions/workflows/tox_test.yml/badge.svg)
 [![Published on Django Packages](https://img.shields.io/badge/Published%20on-Django%20Packages-0c3c26)](https://djangopackages.org/packages/p/django-daisy/)
 ![PyPI Downloads](https://badgen.net/pypi/dm/django-daisy)
 
-**🎉 NEW: Version 2.0 is here!** Built with DaisyUI v5 and Tailwind CSS v4 for blazing-fast performance, enhanced responsiveness, and stunning new designs.
+## What's new in 2.1.0
+
+- **Admin dashboard** with activity charts, recent changes, and configurable quick links.
+- **Global admin search** (`Ctrl+K` / `⌘K`) for model pages and add actions, with opt-in record search.
+- **Admin UI updates** include a resizable sidebar, theme-aware logos, improved filters and form tabs, and updated Persian translations.
+
+[Full release notes](https://github.com/django-daisy/django-daisy/releases/tag/v2.1.0)
 
 ---
 
